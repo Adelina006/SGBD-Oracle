@@ -586,3 +586,106 @@ end loop;
 end;
 /
 
+
+set serveroutput on
+declare 
+v_nr varchar2(50) := '357763287986';
+v_rez pls_integer;
+begin 
+for i in reverse 1..length(v_nr) loop
+v_rez := substr(v_nr, i, 1);
+dbms_output.put_line(v_rez);
+end loop;
+end;
+/
+
+declare
+v_nr varchar2(50) := '5628g9ds*bjd89289';
+v_rez pls_integer;
+v_suma_pare pls_integer := 0;
+v_suma_impare pls_integer := 0;
+begin
+for i in 1..length(v_nr) loop
+if ascii(substr(v_nr, i, 1)) between 48 and 57 then v_rez := substr(v_nr, i, 1);
+if v_rez mod 2 = 0 then
+v_suma_pare := v_suma_pare + v_rez;
+else
+v_suma_impare:= v_suma_impare + v_rez;
+end if;
+end if;
+end loop;
+dbms_output.put_line(v_suma_pare);
+dbms_output.put_line(v_suma_impare);
+end;
+/
+
+
+DECLARE
+  V_ID_PRODUS PRODUSE.ID_PRODUS%TYPE;
+  V_DENUMIRE_PRODUS PRODUSE.DENUMIRE_PRODUS%TYPE;
+  V_CATEGORIE PRODUSE.CATEGORIE%TYPE;
+BEGIN
+  FOR I IN 1726..1740 LOOP
+   BEGIN
+    SELECT ID_PRODUS, DENUMIRE_PRODUS,CATEGORIE INTO
+     V_ID_PRODUS,V_DENUMIRE_PRODUS,V_CATEGORIE
+     FROM PRODUSE WHERE ID_PRODUS=I;
+     DBMS_OUTPUT.PUT_LINE(V_ID_PRODUS||' '||V_DENUMIRE_PRODUS||' '||V_CATEGORIE);
+     EXCEPTION WHEN NO_DATA_FOUND THEN NULL;
+   END;  
+  END LOOP;  
+END;
+/
+
+DECLARE
+  V_ID_PRODUS PRODUSE.ID_PRODUS%TYPE;
+  V_DENUMIRE_PRODUS PRODUSE.DENUMIRE_PRODUS%TYPE;
+  V_CATEGORIE PRODUSE.CATEGORIE%TYPE;
+  N PLS_INTEGER;
+BEGIN
+  FOR I IN 1726..1740 LOOP
+    SELECT COUNT(*) INTO N FROM PRODUSE WHERE ID_PRODUS=I;
+    IF N=1 THEN
+    SELECT ID_PRODUS, DENUMIRE_PRODUS,CATEGORIE INTO
+     V_ID_PRODUS,V_DENUMIRE_PRODUS,V_CATEGORIE
+     FROM PRODUSE WHERE ID_PRODUS=I;
+     DBMS_OUTPUT.PUT_LINE(V_ID_PRODUS||' '||V_DENUMIRE_PRODUS||' '||V_CATEGORIE);
+   END IF;     
+  END LOOP;  
+END;
+/
+
+SET SERVEROUTPUT ON
+DECLARE
+TYPE EmpTabTyp IS TABLE OF angajati%ROWTYPE INDEX BY PLS_INTEGER;
+emp_tab EmpTabTyp;
+BEGIN
+SELECT * INTO emp_tab(200) FROM angajati WHERE id_angajat = 200;
+dbms_output.put_line('Nume='||emp_tab(200).prenume);
+dbms_output.put_line(case when emp_tab.exists(200) then 'exista' else 'nu exista' end);
+dbms_output.put_line(case when emp_tab.exists(1) then 'exista' else 'nu exista' end);
+SELECT * INTO emp_tab(205) FROM angajati WHERE id_angajat = 205;
+dbms_output.put_line('Nume='||emp_tab(205).prenume);
+dbms_output.put_line('Numar de elemente='||emp_tab.count);
+emp_tab(122):=emp_tab(205);
+dbms_output.put_line('Nume='||emp_tab(122).prenume);
+dbms_output.put_line('Numar de elemente='||emp_tab.count);
+emp_tab(2005).prenume:='John';
+dbms_output.put_line('Numar de elemente='||emp_tab.count);
+END;
+/
+
+declare 
+type tabela is table of angajati%rowtype index by pls_integer;
+t tabela;
+begin 
+select * bulk collect into t from angajati order by salariul desc;
+dbms_output.put_line(t.count);
+t.delete(10);
+dbms_output.put_line(t.count);
+for i in t.first..t.last loop
+continue when not t.exists(i);
+dbms_output.put_line(t(i).nume);
+end loop;
+end;
+/
